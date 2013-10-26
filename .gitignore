@@ -14,3 +14,8 @@
 
 # Executables
 *.out
+
+# LaTeX compilation results
+*.pdf
+*.aux
+*.log
