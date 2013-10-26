@@ -8,7 +8,8 @@
 
 \begin{document}
 \begin{center}
-{\huge \textsc{Ocena efektywności systemów komputerowych}}
+\textsc{\huge Ocena efektywności systemów komputerowych}
+
 
 \vspace{0.8cm}
 {\Large Badanie efektywności mechanizmów programowania obiektowego w języku C++}
@@ -17,9 +18,30 @@
 Krzysztof Skoracki
 \vspace{1cm}
 \end{center}
-\section{Cel ćwiczenia}
+\section{Wstęp}
+Celem niniejszego ćwiczenia było zbadanie narzutu związanego z wykorzystywaniem mechanizmów programowania obiektowego w języku C++. W ramach ćwiczenia dokonano także porównania wyżej wspomnianych mechanizmów z technikami programowania proceduralnego.
+
+\subsection{Pomiar czasu}
+Do pomiaru czasu wykonywania poszczególnych instrukcji wykorzystano funkcję \texttt{std::chrono::high\_resolution\_clock::now()} zawartą w bibliotece standardowej języka C++ (od wersji C++11). Funkcja ta zapewnia użycie najdokładniejszego zegara dostępnego na danej platformie.
+
+\subsection{Środowisko testowe}
+Wszystkie testy były uruchamiane na komputerze z dwurdzeniowym procesorem Intel taktowanym zegarem 2.4GHz z 4GB pamięci RAM. Uzytym systemem operacyjnym było Ubuntu 12.10 w wersji 64-bitowej.
+
+Program testowy kompilowany był za pomocą kompilatora \texttt{g++} w wersji 4.7.2 z wszystkimi dostępnymi optymalizacjami wyłączonymi:
+
+\texttt{g++ -std=c++11 -O0 main.cpp}
 
 \section{Przebieg ćwiczenia}
+W ramach
+\subsection{Koszty wywołania metody}
+\begin{tabular}{ c c }
+  \textbf{Metoda} & \textbf{Czas [ms]} \\ \hline
+  pusta pętla & 2 \\ \hline
+  wolna funkcja & 5 \\ \hline
+  metoda & 8 \\ \hline
+  metoda wirtualna & 8 \\
+\end{tabular}
+\subsection{Instrukcja warunkowa a polimorfizm}
 
 % \begin{figure}[H]
 % 	\centering
