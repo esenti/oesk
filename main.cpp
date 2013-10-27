@@ -4,29 +4,20 @@
 class TestClass
 {
 public:
-	TestClass()
-	{
-	}
-
-	int getFoo()
-	{
-		return foo;
-	}
-
 	int method() const
 	{
 		return 5;
 	}
-
-	int ass;
-
-protected:
-	int foo;
 };
 
 int freeFunction()
 {
 	return 5;
+}
+
+int freeFunction2()
+{
+	return 1;
 }
 
 class VirtualBase
@@ -52,6 +43,14 @@ public:
 	}
 };
 
+class IntClass
+{
+public:
+	int a;
+	int b;
+	int c;
+};
+
 // class VirtualChild2: public VirtualBase
 // {
 // public:
@@ -63,7 +62,7 @@ public:
 
 int main(int argc, char const *argv[])
 {
-//	int f;
+	int f;
 
 	std::chrono::high_resolution_clock::duration total;
 
@@ -77,25 +76,39 @@ int main(int argc, char const *argv[])
 		// start = std::chrono::high_resolution_clock::now();
 		//testVirtual.virtualMethod();
 
-		// if(true);
-		#ifdef VIRTUAL
+		// IntClass ints;
+		// int a;
+		// int b;
+		// int c;
+
+		#ifdef IF_VIRTUAL
+			f = testVirtual.virtualMethod();
+		#endif
+
+		#ifdef IF_INLINE
+			if(f == 5) f = 1; else f = 5;
+		#endif
+
+		#ifdef IF_FUNCTION
+			if(f == 5) f = freeFunction2(); else f = freeFunction();
+		#endif
+
+
+		#ifdef CALL_VIRTUAL
 			testVirtual.virtualMethod();
 		#endif
 
-		#ifdef METHOD
+		#ifdef CALL_METHOD
 			test.method();
 		#endif
 
-		#ifdef FUNCTION
+		#ifdef CALL_FUNCTION
 			freeFunction();
 		#endif
 		// end = std::chrono::high_resolution_clock::now();
 
 		// total += (end - start);
-		//if(f != 1) f = 1; else f = 2;
 		// total += (end - start);
-		// getAss();
-		// test.getAss();
 	}
 
 	auto end = std::chrono::high_resolution_clock::now();
