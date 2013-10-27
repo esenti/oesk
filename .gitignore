@@ -19,3 +19,6 @@
 *.pdf
 *.aux
 *.log
+
+# Assembly files
+*.asm

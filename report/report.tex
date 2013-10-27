@@ -7,6 +7,7 @@
 \usepackage{float}
 
 \begin{document}
+\renewcommand*{\tablename}{Tab.}
 \begin{center}
 \textsc{\huge Ocena efektywności systemów komputerowych}
 
@@ -32,15 +33,30 @@ Program testowy kompilowany był za pomocą kompilatora \texttt{g++} w wersji 4.
 \texttt{g++ -std=c++11 -O0 main.cpp}
 
 \section{Przebieg ćwiczenia}
-W ramach
+Testowane funkcje wywoływane były w pętli po 2000000000 iteracji. Dodatkowo program testowy uruchamiany był 10 razy, wartości w tabeli stanowią wartość średnią ze wszystkich uruchomień.
 \subsection{Koszty wywołania metody}
+Celem tego badania było porównanie kosztu wywołania kilku rodzajów funkcji:
+\begin{itemize}
+\item funkcja --
+\item metoda --
+\item metoda wirtualna --
+\end{itemize}
+
+Wyniki przedstawiono w tabeli \ref{table:fun}.
+
+\begin{table}[H]
+\center
 \begin{tabular}{ c c }
   \textbf{Metoda} & \textbf{Czas [ms]} \\ \hline
   pusta pętla & 2 \\ \hline
-  wolna funkcja & 5 \\ \hline
+  funkcja & 5 \\ \hline
   metoda & 8 \\ \hline
   metoda wirtualna & 8 \\
 \end{tabular}
+\caption{Porównanie kosztu wywołania różnych rodzajów funkcji}
+\label{table:fun}
+\end{table}
+
 \subsection{Instrukcja warunkowa a polimorfizm}
 
 % \begin{figure}[H]

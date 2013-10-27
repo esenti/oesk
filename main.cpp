@@ -52,6 +52,15 @@ public:
 	}
 };
 
+// class VirtualChild2: public VirtualBase
+// {
+// public:
+// 	int virtualMethod() const
+// 	{
+// 		return 3;
+// 	}
+// };
+
 int main(int argc, char const *argv[])
 {
 //	int f;
@@ -63,12 +72,23 @@ int main(int argc, char const *argv[])
 	auto start = std::chrono::high_resolution_clock::now();
 	// auto end = std::chrono::high_resolution_clock::now();
 
-	for(int i = 0; i < 1000000000; ++i)
+	for(int i = 0; i < 2000000000; ++i)
 	{
 		// start = std::chrono::high_resolution_clock::now();
-		// testVirtual.virtualMethod();
-		// test.method();
-		freeFunction();
+		//testVirtual.virtualMethod();
+
+		// if(true);
+		#ifdef VIRTUAL
+			testVirtual.virtualMethod();
+		#endif
+
+		#ifdef METHOD
+			test.method();
+		#endif
+
+		#ifdef FUNCTION
+			freeFunction();
+		#endif
 		// end = std::chrono::high_resolution_clock::now();
 
 		// total += (end - start);
@@ -82,7 +102,6 @@ int main(int argc, char const *argv[])
 	total = (end - start);
 
 	auto dur = std::chrono::duration_cast<std::chrono::milliseconds>(total);
-	// std::cout << "Measured time: " << dur.count() << "ms" << std::endl;
 	std::cout << dur.count() << std::endl;
 
 	return 0;
