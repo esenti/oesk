@@ -20,50 +20,86 @@ Krzysztof Skoracki
 \vspace{1cm}
 \end{center}
 \section{Wstęp}
-Celem niniejszego ćwiczenia było zbadanie narzutu związanego z wykorzystywaniem mechanizmów programowania obiektowego w języku C++. W ramach ćwiczenia dokonano także porównania wyżej wspomnianych mechanizmów z technikami programowania proceduralnego.
+Celem niniejszego ćwiczenia było zbadanie narzutu związanego z wykorzystaniem mechanizmów programowania obiektowego w języku C++. W ramach badania dokonano także porównania wyżej wspomnianych mechanizmów z technikami programowania proceduralnego.
 
 \subsection{Pomiar czasu}
 Do pomiaru czasu wykonywania poszczególnych instrukcji wykorzystano funkcję \texttt{std::chrono::high\_resolution\_clock::now()} zawartą w bibliotece standardowej języka C++ (od wersji C++11). Funkcja ta zapewnia użycie najdokładniejszego zegara dostępnego na danej platformie.
 
 \subsection{Środowisko testowe}
-Wszystkie testy były uruchamiane na komputerze z dwurdzeniowym procesorem Intel taktowanym zegarem 2.4GHz z 4GB pamięci RAM. Uzytym systemem operacyjnym było Ubuntu 12.10 w wersji 64-bitowej.
+Wszystkie testy były uruchamiane na komputerze z dwurdzeniowym procesorem Intel taktowanym zegarem 2.4GHz z 4GB pamięci RAM. Użytym systemem operacyjnym było Ubuntu 12.10 w wersji 64-bitowej.
 
 Program testowy kompilowany był za pomocą kompilatora \texttt{g++} w wersji 4.7.2 z wszystkimi dostępnymi optymalizacjami wyłączonymi:
 
 \texttt{g++ -std=c++11 -O0 main.cpp}
 
-\section{Przebieg ćwiczenia}
-Testowane funkcje wywoływane były w pętli po 2000000000 iteracji. Dodatkowo program testowy uruchamiany był 10 razy, wartości w tabeli stanowią wartość średnią ze wszystkich uruchomień.
-\subsection{Koszty wywołania metody}
+\section{Przebieg badania}
+Testowane funkcje wywoływane były w pętli po 2000000000 iteracji. Dodatkowo program testowy uruchamiany był 10 razy -- wartości w tabelach stanowią wartość średnią ze wszystkich uruchomień.
+
+\subsection{Koszty wywołania funkcji i metody}
 Celem tego badania było porównanie kosztu wywołania kilku rodzajów funkcji:
 \begin{itemize}
-\item funkcja --
-\item metoda --
-\item metoda wirtualna --
+\item funkcja -- wolna funkcja
+\item metoda -- metoda klasy
+\item metoda wirtualna -- metoda oznaczona jako wirtualna wywoływana dla referencji do klasy bazowej, do której przypisany został obiekt klasy pochodnej: \texttt{const VirtualBase\& testVirtual = VirtualChild();}
 \end{itemize}
 
 Wyniki przedstawiono w tabeli \ref{table:fun}.
 
 \begin{table}[H]
 \center
-\begin{tabular}{ c c }
-  \textbf{Metoda} & \textbf{Czas [ms]} \\ \hline
-  pusta pętla & 2 \\ \hline
-  funkcja & 5 \\ \hline
-  metoda & 8 \\ \hline
-  metoda wirtualna & 8 \\
+\begin{tabular}{ c c c }
+  \textbf{Metoda} & \textbf{Czas [ms]} & \textbf{Czas iteracji [ns]} \\ \hline
+  funkcja & 7005 & 3,5 \\ \hline
+  metoda & 8074 & 4,04\\ \hline
+  metoda wirtualna & 9229 & 4,61 \\
 \end{tabular}
 \caption{Porównanie kosztu wywołania różnych rodzajów funkcji}
 \label{table:fun}
 \end{table}
 
+Zgodnie z oczekiwaniami, wywołanie metody klasy jest nieco bardziej kosztowne niż wywołanie wolnej funkcji. Jest to zapewne związane z koniecznością przekazania dodatkowego parametru wywołania -- wskaźnika do obiektu, dla którego metoda jest wywoływana.
+
+Kolejny narzut związany jest z wywołaniem metody wirtualnej -- konieczne jest w tym przypadku wybranie właściwej funkcji korzystając z tablicy funkcji wirtualnych dla danej klasy (\textit{vtable}).
+
+Warto zauważyć, że mimo, iż różnica wydajności jest widoczna w testach, to narzut w wysokości 1ns nie powinien być problemem w większości praktycznych zastosowań.
+
 \subsection{Instrukcja warunkowa a polimorfizm}
 
-% \begin{figure}[H]
-% 	\centering
-% 	\includegraphics[width=10cm]{tri.png}
-% 	\caption{Widok planszy, na której ma miejsce gra.}
-% \end{figure}
+W celu zbadania wydajności mechanizmu polimorfizmu w nieco bardziej praktycznych warunkach, przeprowadzono kolejne badanie. Miało ono na celu określenie, jakie są różnice wydajności pomiędzy wywołaniem funkcji wirtualnej a zastosowaniem zwykłej instrukcji warunkowej.
+
+Funkcja \texttt{freeFunction} zwraca wartość 5, natomiast funkcja \texttt{freeFunction2} -- 1.
+
+\begin{itemize}
+\item warunek, wariant 1 -- \texttt{if(f == 5) f = 1; else f = 5;}
+\item warunek, wariant 2 -- \texttt{if(f == 1) f = 1; else f = 5;}
+\item warunek + funkcja, wariant 1 -- \texttt{if(f == 5) f = freeFunction2(); else f = freeFunction();}
+\item warunek + funkcja, wariant 2 -- \texttt{if(f == 1) f = freeFunction2(); else f = freeFunction();}
+\item metoda wirtualna -- \texttt{f = testVirtual.virtualMethod();}
+\end{itemize}
+
+Wyniki przedstawiono w tabeli \ref{table:if}.
+
+\begin{table}[H]
+\center
+\begin{tabular}{ c c c }
+  \textbf{Metoda} & \textbf{Czas [ms]} & \textbf{Czas iteracji [ns]} \\ \hline
+  warunek, wariant 1 & 7336 & 3,67 \\ \hline
+  warunek, wariant 2 & 7277 & 3,64 \\ \hline
+  warunek + funkcja, wariant 1 & 9592 & 4,8 \\ \hline
+  warunek + funkcja, wariant 2 & 9111 & 4,56 \\ \hline
+  metoda wirtualna & 9366 & 4,68 \\
+\end{tabular}
+\caption{Porównanie kosztu wywołania funkcji wirtualnej oraz zastosowania instrukcji warunkowej}
+\label{table:if}
+\end{table}
+
+Zgodnie z przewidywaniami, wersja z bezpośrednim wywołaniem instrukcji okazała się najszybsza. Z kolei w przypadku instrukcji warunkowej wywołującej odpowiednią funkcję, jej koszty są zbliżone do kosztów wywołania metody wirtualnej. Różnica na korzyść jednej z nich zależy od wybranego wariantu tej pierwszej.
+
+Warto zwrócić uwagę na różnicę wydajności pomiędzy dwoma wariantami w przypadku instrukcji warunkowej. Różnica ta związana jest z mechanizmem przewidywania rozgałęzień (\textit{branch prediction}) w procesorze. W przypadku wariantu 2 warunek w każdej iteracji ma taką samą wartość, co sprawia, że przewidzenie, która gałąź zostanie wybrana jest trywialne. Dla wariantu 1 warunek przybiera dwie wartości, zmieniające się cyklicznie w każdej iteracji -- jak widać, utrudnia to działanie mechanizmu przewidywania rozgałęzień.
+
+Podobnie jak w pierwszym badaniu, i tutaj różnice wydajności poszczególnych rozwiązań są raczej niewielkie. Na szczególną uwagę zasługuje fakt, że rozwiązanie używające instrukcji warunkowej oraz wywołania metody wirtualnej mają niemal identyczny koszt.
 
 \section{Wnioski}
+Jak widać, narzut związany z wykorzystaniem pewnych technik programowania obiektowego w języku C++ istnieje i udało się go zaobserwować w niniejszym badaniu. Co ważniejsze jednak, wyniki pokazują, że różnice w wydajności, mimo, że zauważalne w warunkach testowych, w zastosowaniach praktycznych najczęściej nie będą miały znaczenia.
+
 \end{document}

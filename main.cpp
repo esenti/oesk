@@ -51,14 +51,6 @@ public:
 	int c;
 };
 
-// class VirtualChild2: public VirtualBase
-// {
-// public:
-// 	int virtualMethod() const
-// 	{
-// 		return 3;
-// 	}
-// };
 
 int main(int argc, char const *argv[])
 {
@@ -69,18 +61,9 @@ int main(int argc, char const *argv[])
 	const TestClass& test = TestClass();
 	const VirtualBase& testVirtual = VirtualChild();
 	auto start = std::chrono::high_resolution_clock::now();
-	// auto end = std::chrono::high_resolution_clock::now();
 
 	for(int i = 0; i < 2000000000; ++i)
 	{
-		// start = std::chrono::high_resolution_clock::now();
-		//testVirtual.virtualMethod();
-
-		// IntClass ints;
-		// int a;
-		// int b;
-		// int c;
-
 		#ifdef IF_VIRTUAL
 			f = testVirtual.virtualMethod();
 		#endif
@@ -89,8 +72,16 @@ int main(int argc, char const *argv[])
 			if(f == 5) f = 1; else f = 5;
 		#endif
 
+		#ifdef IF_INLINE_PRED
+			if(f == 1) f = 1; else f = 5;
+		#endif
+
 		#ifdef IF_FUNCTION
 			if(f == 5) f = freeFunction2(); else f = freeFunction();
+		#endif
+
+		#ifdef IF_FUNCTION_PRED
+			if(f == 1) f = freeFunction2(); else f = freeFunction();
 		#endif
 
 
@@ -105,10 +96,6 @@ int main(int argc, char const *argv[])
 		#ifdef CALL_FUNCTION
 			freeFunction();
 		#endif
-		// end = std::chrono::high_resolution_clock::now();
-
-		// total += (end - start);
-		// total += (end - start);
 	}
 
 	auto end = std::chrono::high_resolution_clock::now();
